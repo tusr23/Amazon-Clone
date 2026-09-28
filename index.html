@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amazon Clone - Simple & Easy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="logo">amazon<span>.clone</span></div>
+
+    <div class="nav-delivery">
+      <i class="fa-solid fa-location-dot"></i>
+      <div>
+        <small>Deliver to</small>
+        <b>Worldwide</b>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search Amazon Clone..." oninput="searchProducts(this.value)">
+      <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+
+    <!-- Right: Account & Cart -->
+    <div class="nav-right">
+      <div class="nav-account">
+        <small>Hello, Sign in</small>
+        <b>Account</b>
+      </div>
+
+      <div class="cart-btn" onclick="toggleCart()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-count">0</span>
+        <b>Cart</b>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sub Navigation (Category Tabs Component) -->
+  <nav class="subnav">
+    <button class="tab-btn active" onclick="filterCategory('all', this)"><i class="fa-solid fa-border-all"></i> All</button>
+    <button class="tab-btn deals-tab" onclick="filterCategory('deals', this)"><i class="fa-solid fa-fire"></i> Today's Deals</button>
+    <button class="tab-btn" onclick="filterCategory('electronics', this)"><i class="fa-solid fa-tv"></i> Electronics</button>
+    <button class="tab-btn" onclick="filterCategory('fashion', this)"><i class="fa-solid fa-shirt"></i> Fashion</button>
+    <button class="tab-btn" onclick="filterCategory('gaming', this)"><i class="fa-solid fa-gamepad"></i> Gaming</button>
+    <button class="tab-btn" onclick="filterCategory('home', this)"><i class="fa-solid fa-couch"></i> Home</button>
+    <button class="tab-btn" onclick="filterCategory('books', this)"><i class="fa-solid fa-book"></i> Books</button>
+    <button class="tab-btn" onclick="filterCategory('beauty', this)"><i class="fa-solid fa-wand-magic-sparkles"></i> Beauty</button>
+    <span class="subnav-promo"><i class="fa-solid fa-truck-fast"></i> Free Shipping on $35+</span>
+  </nav>
+
+  <!-- Hero Banner -->
+  <section class="banner">
+    <h2>Welcome to Amazon Clone</h2>
+    <p>Shop everyday essentials, top gadgets & bestsellers with fast delivery.</p>
+  </section>
+
+  <!-- Main Store -->
+  <main class="store-container">
+    <h3 id="category-title">Featured Products</h3>
+    <div class="products-grid" id="products-grid"></div>
+  </main>
+
+  <!-- Sliding Cart Drawer -->
+  <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h3>Shopping Cart</h3>
+      <button class="close-btn" onclick="toggleCart()">&times;</button>
+    </div>
+    <div class="cart-body" id="cart-items"></div>
+    <div class="cart-footer">
+      <div class="total-row">Total: <span id="cart-total">$0.00</span></div>
+      <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+      <button class="clear-btn" onclick="clearCart()">Empty Cart</button>
+    </div>
+  </aside>
+
+  <!-- Toast Notification -->
+  <div id="toast">Added to cart!</div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">Back to top</div>
+    <p class="copyright">© 2026 Amazon Clone - Simple Beginner E-Commerce Project</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
