@@ -11,30 +11,85 @@
 
   <!-- Top Navbar -->
   <header class="navbar">
-    <div class="logo">amazon<span>.clone</span></div>
+    <a href="#" class="logo-link" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" aria-label="Amazon Clone Home">
+      <div class="logo">amazon<span>.clone</span></div>
+    </a>
 
-    <div class="nav-delivery">
+    <!-- Delivery Location -->
+    <div class="nav-delivery" id="nav-delivery" onclick="openLocationModal()" title="Change delivery location">
       <i class="fa-solid fa-location-dot"></i>
       <div>
         <small>Deliver to</small>
-        <b>Worldwide</b>
+        <b id="delivery-location-label">Worldwide</b>
       </div>
     </div>
 
-    <!-- Search Bar -->
+    <!-- Search Bar with Department Selector -->
     <div class="search-box">
-      <input type="text" id="search-input" placeholder="Search Amazon Clone..." oninput="searchProducts(this.value)">
-      <button><i class="fa-solid fa-magnifying-glass"></i></button>
+      <div class="search-category-wrap">
+        <select id="search-category-select" onchange="handleCategorySelectChange(this.value)" aria-label="Select search category">
+          <option value="all">All Departments</option>
+          <option value="deals">Today's Deals</option>
+          <option value="electronics">Electronics</option>
+          <option value="fashion">Fashion</option>
+          <option value="gaming">Gaming</option>
+          <option value="home">Home & Kitchen</option>
+          <option value="books">Books</option>
+          <option value="beauty">Beauty</option>
+        </select>
+        <i class="fa-solid fa-caret-down select-caret"></i>
+      </div>
+      <input type="text" id="search-input" placeholder="Search Amazon Clone..." oninput="handleSearchInput(this.value)" onkeydown="if(event.key==='Enter') executeSearch()">
+      <button class="search-submit-btn" onclick="executeSearch()" aria-label="Search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
     </div>
 
-    <!-- Right: Account & Cart -->
+    <!-- Right: Account, Orders, Login & Cart -->
     <div class="nav-right">
-      <div class="nav-account">
-        <small>Hello, Sign in</small>
-        <b>Account</b>
+      <!-- Account & Lists -->
+      <div class="account-wrapper">
+        <div class="nav-account" id="nav-account" onclick="handleAccountClick()" aria-label="Account and Lists">
+          <i class="fa-regular fa-circle-user nav-user-icon"></i>
+          <div>
+            <small id="user-greeting">Hello, Sign in</small>
+            <b id="user-account-label">Account & Lists</b>
+          </div>
+          <i class="fa-solid fa-caret-down nav-caret"></i>
+        </div>
+
+        <!-- Account Dropdown Menu -->
+        <div class="account-dropdown" id="account-dropdown">
+          <div class="dropdown-header" id="dropdown-header">
+            <p>Welcome to Amazon Clone</p>
+            <button class="dropdown-signin-btn" onclick="openLoginModal()">Sign in</button>
+            <small>New customer? <a href="#" onclick="openLoginModal(); return false;">Start here.</a></small>
+          </div>
+          <hr class="dropdown-divider">
+          <div class="dropdown-menu-list">
+            <h4>Your Account</h4>
+            <a href="#" onclick="showOrdersModal(); return false;"><i class="fa-solid fa-box"></i> Your Orders</a>
+            <a href="#" onclick="showToast('Feature: Your Wish List'); return false;"><i class="fa-solid fa-heart"></i> Your Wish List</a>
+            <a href="#" onclick="showToast('Feature: Personalized Recommendations'); return false;"><i class="fa-solid fa-tags"></i> Recommendations</a>
+            <a href="#" id="dropdown-signout-link" class="signout-link" onclick="logout(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</a>
+          </div>
+        </div>
       </div>
 
-      <div class="cart-btn" onclick="toggleCart()">
+      <!-- Returns & Orders -->
+      <div class="nav-orders" id="nav-orders" onclick="handleOrdersClick()" title="Check your orders">
+        <small>Returns</small>
+        <b>& Orders</b>
+      </div>
+
+      <!-- Dedicated Login / Sign Out Button -->
+      <button class="nav-login-btn" id="nav-auth-btn" onclick="handleAuthBtnClick()" aria-label="Sign in">
+        <i class="fa-solid fa-arrow-right-to-bracket" id="nav-auth-icon"></i>
+        <span id="nav-auth-text">Sign In</span>
+      </button>
+
+      <!-- Cart Button -->
+      <div class="cart-btn" onclick="toggleCart()" aria-label="View Cart">
         <i class="fa-solid fa-cart-shopping"></i>
         <span id="cart-count">0</span>
         <b>Cart</b>
@@ -42,7 +97,7 @@
     </div>
   </header>
 
-  <!-- Sub Navigation (Category Tabs Component) -->
+  <!-- Sub Navigation -->
   <nav class="subnav">
     <button class="tab-btn active" onclick="filterCategory('all', this)"><i class="fa-solid fa-border-all"></i> All</button>
     <button class="tab-btn deals-tab" onclick="filterCategory('deals', this)"><i class="fa-solid fa-fire"></i> Today's Deals</button>
@@ -81,6 +136,136 @@
       <button class="clear-btn" onclick="clearCart()">Empty Cart</button>
     </div>
   </aside>
+
+  <!-- Pre-footer Recommendations Prompt -->
+  <section class="auth-footer-prompt" id="auth-footer-prompt">
+    <div class="auth-prompt-card">
+      <p class="prompt-heading">See personalized recommendations</p>
+      <button class="prompt-signin-btn" onclick="openLoginModal()">Sign in</button>
+      <p class="prompt-subtext">New customer? <a href="#" onclick="openLoginModal(); return false;">Start here.</a></p>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div class="auth-overlay" id="auth-overlay" onclick="closeLoginModal(event)">
+    <div class="auth-modal" onclick="event.stopPropagation()">
+      <button class="auth-close-btn" onclick="closeLoginModal()">&times;</button>
+      <div class="auth-modal-logo">amazon<span>.clone</span></div>
+      <div class="auth-box">
+        <h2>Sign in</h2>
+        <form id="auth-form" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label for="login-email">Email or mobile phone number</label>
+            <input type="text" id="login-email" placeholder="e.g. alex@example.com" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <div class="password-label-row">
+              <label for="login-password">Password</label>
+              <a href="#" class="forgot-link" onclick="showToast('Demo hint: Any password works or click 1-Click Demo'); return false;">Forgot password?</a>
+            </div>
+            <input type="password" id="login-password" placeholder="At least 6 characters" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="auth-submit-btn" id="modal-signin-btn">Sign in</button>
+          <p class="auth-legal">By continuing, you agree to Amazon Clone's <a href="#" onclick="return false;">Conditions of Use</a> and <a href="#" onclick="return false;">Privacy Notice</a>.</p>
+          <div class="auth-divider"><span>Quick test option</span></div>
+          <button type="button" class="auth-demo-btn" onclick="demoLogin()"><i class="fa-solid fa-bolt"></i> 1-Click Demo Login (John Doe)</button>
+        </form>
+      </div>
+      <div class="auth-modal-footer">
+        <small>Need help? <a href="#" onclick="showToast('Help: Use 1-Click Demo Login to test instantly!'); return false;">Help Center</a></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Modal -->
+  <div class="orders-overlay" id="orders-overlay" onclick="closeOrdersModal(event)">
+    <div class="orders-modal" onclick="event.stopPropagation()">
+      <div class="orders-modal-header">
+        <h3><i class="fa-solid fa-box"></i> Your Orders & Returns</h3>
+        <button class="orders-close-btn" onclick="closeOrdersModal()">&times;</button>
+      </div>
+      <div class="orders-modal-body">
+        <div class="orders-meta-info" id="orders-user-info">
+          <span>Signed in as <b>John Doe</b></span>
+          <span class="orders-count">Showing 2 recent orders</span>
+        </div>
+        <div class="orders-list">
+          <div class="order-card">
+            <div class="order-card-header">
+              <div><small>ORDER PLACED</small><div>Yesterday</div></div>
+              <div><small>TOTAL</small><div>$49.99</div></div>
+              <div class="order-id"><small>ORDER # 114-8932471</small></div>
+            </div>
+            <div class="order-card-body">
+              <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200" alt="Headphones">
+              <div class="order-details">
+                <span class="status-badge delivered"><i class="fa-solid fa-circle-check"></i> Delivered yesterday</span>
+                <h5>Wireless Noise-Canceling Headphones</h5>
+                <p>Package was handed directly to resident.</p>
+              </div>
+              <div class="order-actions">
+                <button class="order-action-btn primary" onclick="showToast('Tracking: Package delivered to front door.')"><i class="fa-solid fa-truck"></i> Track package</button>
+                <button class="order-action-btn" onclick="addToCart(1); showToast('Added to cart!'); closeOrdersModal();"><i class="fa-solid fa-rotate-right"></i> Buy it again</button>
+              </div>
+            </div>
+          </div>
+          <div class="order-card">
+            <div class="order-card-header">
+              <div><small>ORDER PLACED</small><div>3 days ago</div></div>
+              <div><small>TOTAL</small><div>$79.99</div></div>
+              <div class="order-id"><small>ORDER # 114-5542893</small></div>
+            </div>
+            <div class="order-card-body">
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200" alt="Fitness Watch">
+              <div class="order-details">
+                <span class="status-badge in-transit"><i class="fa-solid fa-truck-fast"></i> Arriving Tomorrow by 9 PM</span>
+                <h5>Smart Fitness Watch with Heart Rate</h5>
+                <p>Carrier: Amazon Logistics (Tracking: TBA39812401)</p>
+              </div>
+              <div class="order-actions">
+                <button class="order-action-btn primary" onclick="showToast('Tracking: Out for delivery tomorrow by 9 PM.')"><i class="fa-solid fa-truck"></i> Track package</button>
+                <button class="order-action-btn" onclick="showToast('Return window open through next month.')"><i class="fa-solid fa-arrow-rotate-left"></i> Return item</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delivery Location Modal -->
+  <div class="location-overlay" id="location-overlay" onclick="closeLocationModal(event)">
+    <div class="location-modal" onclick="event.stopPropagation()">
+      <div class="location-header">
+        <h3><i class="fa-solid fa-location-dot"></i> Choose your location</h3>
+        <button class="location-close-btn" onclick="closeLocationModal()">&times;</button>
+      </div>
+      <div class="location-body">
+        <p class="location-desc">Select a delivery destination to see real-time product availability and shipping fees.</p>
+        <div class="location-section">
+          <label for="country-selector">Select a country/region:</label>
+          <select id="country-selector" class="location-select" onchange="setDeliveryCountry(this.value)">
+            <option value="Worldwide">Worldwide (Global Delivery)</option>
+            <option value="United States">United States (Free US Shipping)</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Canada">Canada</option>
+            <option value="India">India</option>
+            <option value="Germany">Germany (Deutschland)</option>
+            <option value="Australia">Australia</option>
+            <option value="Japan">Japan (日本)</option>
+          </select>
+        </div>
+        <div class="location-divider"><span>or enter a US zip code</span></div>
+        <div class="zip-input-row">
+          <input type="text" id="zip-code-input" placeholder="e.g. 98101" maxlength="10">
+          <button class="zip-apply-btn" onclick="applyZipCode()">Apply</button>
+        </div>
+        <div class="location-footer-btn">
+          <button class="done-btn" onclick="closeLocationModal()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Notification -->
   <div id="toast">Added to cart!</div>

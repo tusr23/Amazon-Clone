@@ -1,4 +1,10 @@
-// 1. Products Data (Expanded Variety)
+// ========================================================
+// AMAZON CLONE - OPTIMIZED JAVASCRIPT
+// ========================================================
+
+const $ = id => document.getElementById(id);
+
+// 1. Products Catalog
 const products = [
   // Electronics
   { id: 1, title: "Wireless Noise-Canceling Headphones", category: "electronics", price: 49.99, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400" },
@@ -31,14 +37,13 @@ const products = [
   { id: 18, title: "Ionic Ceramic Salon Hair Dryer", category: "beauty", price: 36.99, image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400" }
 ];
 
-let cart = [];
-
 // 2. Render Product Cards
 function renderProducts(list) {
-  const grid = document.getElementById('products-grid');
+  const grid = $('products-grid');
+  if (!grid) return;
   grid.innerHTML = list.map(item => `
     <div class="card">
-      <img src="${item.image}" alt="${item.title}">
+      <img src="${item.image}" alt="${item.title}" loading="lazy">
       <h4>${item.title}</h4>
       <div class="rating">★★★★★ (4.8)</div>
       <div class="price">$${item.price.toFixed(2)}</div>
@@ -47,99 +52,332 @@ function renderProducts(list) {
   `).join('');
 }
 
-// 3. Add to Cart
+// 3. Cart Management
+let cart = [];
+
 function addToCart(id) {
   const item = products.find(p => p.id === id);
+  if (!item) return;
   cart.push(item);
   updateCart();
   showToast(`Added "${item.title.slice(0, 20)}..." to cart!`);
 }
 
-// 4. Update Cart Drawer & Total
 function updateCart() {
-  document.getElementById('cart-count').innerText = cart.length;
-  const cartBody = document.getElementById('cart-items');
-  let total = 0;
+  const countEl = $('cart-count');
+  if (countEl) countEl.innerText = cart.length;
 
-  cartBody.innerHTML = cart.map((item, index) => {
-    total += item.price;
-    return `
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const cartBody = $('cart-items');
+  if (cartBody) {
+    cartBody.innerHTML = cart.map((item, i) => `
       <div class="cart-item">
         <span>${item.title.slice(0, 22)}...</span>
         <b>$${item.price.toFixed(2)}</b>
-        <button onclick="removeItem(${index})">&times;</button>
+        <button onclick="removeItem(${i})" title="Remove item">&times;</button>
       </div>
-    `;
-  }).join('');
+    `).join('');
+  }
 
-  document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+  const totalEl = $('cart-total');
+  if (totalEl) totalEl.innerText = `$${total.toFixed(2)}`;
 }
 
-// 5. Remove Item & Clear Cart
-function removeItem(index) {
-  cart.splice(index, 1);
-  updateCart();
-}
+const removeItem = i => { cart.splice(i, 1); updateCart(); };
+const clearCart = () => { cart = []; updateCart(); };
 
-function clearCart() {
-  cart = [];
-  updateCart();
-}
-
-// 6. Open / Close Cart Sidebar
 function toggleCart() {
-  document.getElementById('cart-drawer').classList.toggle('open');
-  document.getElementById('cart-overlay').classList.toggle('open');
+  $('cart-drawer')?.classList.toggle('open');
+  $('cart-overlay')?.classList.toggle('open');
 }
 
-// 7. Checkout
 function checkout() {
-  if (cart.length === 0) return alert("Your cart is empty!");
-  alert(`Order Placed Successfully! Total: ${document.getElementById('cart-total').innerText}`);
+  if (!cart.length) return alert("Your cart is empty!");
+  alert(`Order Placed Successfully! Total: ${$('cart-total')?.innerText || '$0.00'}`);
   clearCart();
   toggleCart();
 }
 
-// 8. Live Search
-function searchProducts(query) {
-  const filtered = products.filter(p => p.title.toLowerCase().includes(query.toLowerCase()));
-  renderProducts(filtered);
+// 4. Categories & Search Filter
+let currentCategory = 'all';
+
+const categoryTitles = {
+  all: 'Featured Products',
+  deals: "🔥 Today's Top Deals",
+  electronics: 'Electronics & Gadgets',
+  fashion: 'Fashion & Clothing',
+  gaming: 'Gaming & Accessories',
+  home: 'Home & Kitchen Essentials',
+  books: 'Books & Bestsellers',
+  beauty: 'Beauty & Personal Care'
+};
+
+function updateCategoryHeading(cat) {
+  const titleEl = $('category-title');
+  if (titleEl) titleEl.innerText = categoryTitles[cat] || (cat.toUpperCase() + ' Products');
 }
 
-// 9. Category Filter
+function handleCategorySelectChange(cat) {
+  currentCategory = cat;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', (btn.getAttribute('onclick') || '').includes(`'${cat}'`));
+  });
+  updateCategoryHeading(cat);
+  applyFilters();
+}
+
 function filterCategory(cat, btn) {
+  currentCategory = cat;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
+  const select = $('search-category-select');
+  if (select) select.value = cat;
+  updateCategoryHeading(cat);
+  applyFilters();
+}
 
-  const titles = {
-    all: 'Featured Products',
-    deals: "🔥 Today's Top Deals",
-    electronics: 'Electronics & Gadgets',
-    fashion: 'Fashion & Clothing',
-    gaming: 'Gaming & Accessories',
-    home: 'Home & Kitchen Essentials',
-    books: 'Books & Bestsellers',
-    beauty: 'Beauty & Personal Care'
-  };
-  document.getElementById('category-title').innerText = titles[cat] || (cat.toUpperCase() + ' Products');
+const handleSearchInput = q => applyFilters(q);
 
+function executeSearch() {
+  applyFilters();
+  document.querySelector('.store-container')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function applyFilters(query) {
+  const q = (query !== undefined ? query : ($('search-input')?.value || '')).toLowerCase().trim();
   let filtered = products;
-  if (cat === 'deals') {
-    filtered = products.filter(p => p.price < 40); // items under $40 are featured deals
-  } else if (cat !== 'all') {
-    filtered = products.filter(p => p.category === cat);
+
+  if (currentCategory === 'deals') {
+    filtered = filtered.filter(p => p.price < 40);
+  } else if (currentCategory !== 'all') {
+    filtered = filtered.filter(p => p.category === currentCategory);
+  }
+
+  if (q) {
+    filtered = filtered.filter(p => p.title.toLowerCase().includes(q));
   }
 
   renderProducts(filtered);
+
+  if (!filtered.length) {
+    const grid = $('products-grid');
+    if (grid) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 45px 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd;">
+          <i class="fa-solid fa-magnifying-glass" style="font-size: 2.2rem; color: #ff9900; margin-bottom: 12px; display: block;"></i>
+          <h4 style="font-size: 1.2rem; margin-bottom: 8px;">No matching products found</h4>
+          <p style="color: #666; font-size: 0.9rem; margin-bottom: 16px;">We couldn't find any products matching your search in this category.</p>
+          <button onclick="clearSearch()" class="btn-yellow" style="padding: 8px 20px; font-size: 0.88rem;">Show All Products</button>
+        </div>
+      `;
+    }
+  }
 }
 
-// 10. Toast Popup
+function clearSearch() {
+  const input = $('search-input');
+  if (input) input.value = '';
+  const select = $('search-category-select');
+  if (select) select.value = 'all';
+  currentCategory = 'all';
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  updateCategoryHeading('all');
+  applyFilters();
+}
+
+const searchProducts = q => handleSearchInput(q);
+
+// 5. Toast Notifications
+let toastTimer;
 function showToast(msg) {
-  const toast = document.getElementById('toast');
+  const toast = $('toast');
+  if (!toast) return;
   toast.innerText = msg;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
 }
 
-// Initial Load
+// 6. Generic Modal Helper
+const toggleModal = (id, show) => {
+  const el = $(id);
+  if (!el) return;
+  el.classList.toggle('open', show);
+  document.body.style.overflow = el.classList.contains('open') ? 'hidden' : '';
+};
+
+const closeModalOnBackdrop = (e, modalId, closeClass) => {
+  if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains(closeClass)) return;
+  toggleModal(modalId, false);
+};
+
+// 7. Authentication State & Modal
+let currentUser = null;
+
+function initAuth() {
+  try {
+    const saved = localStorage.getItem('amazon_clone_user');
+    currentUser = saved ? JSON.parse(saved) : null;
+  } catch { currentUser = null; }
+  updateAuthUI();
+}
+
+function updateAuthUI() {
+  const greeting = $('user-greeting');
+  const authBtnText = $('nav-auth-text');
+  const authBtnIcon = $('nav-auth-icon');
+  const authBtn = $('nav-auth-btn');
+  const footerPrompt = $('auth-footer-prompt');
+  const dropdownHeader = $('dropdown-header');
+  const signoutLink = $('dropdown-signout-link');
+
+  if (currentUser) {
+    if (greeting) greeting.innerText = `Hello, ${currentUser.name}`;
+    if (authBtnText) authBtnText.innerText = 'Sign Out';
+    if (authBtnIcon) authBtnIcon.className = 'fa-solid fa-arrow-right-from-bracket';
+    if (authBtn) {
+      authBtn.classList.add('logged-in');
+      authBtn.title = `Signed in as ${currentUser.name} (Click to sign out)`;
+    }
+    if (footerPrompt) footerPrompt.style.display = 'none';
+    if (dropdownHeader) {
+      dropdownHeader.innerHTML = `
+        <p style="font-size:0.95rem; margin-bottom:4px;">Hello, <strong>${currentUser.name}</strong></p>
+        <small style="color:#666;">${currentUser.email || ''}</small>
+      `;
+    }
+    if (signoutLink) signoutLink.style.display = 'flex';
+  } else {
+    if (greeting) greeting.innerText = 'Hello, Sign in';
+    if (authBtnText) authBtnText.innerText = 'Sign In';
+    if (authBtnIcon) authBtnIcon.className = 'fa-solid fa-arrow-right-to-bracket';
+    if (authBtn) {
+      authBtn.classList.remove('logged-in');
+      authBtn.title = 'Sign In to your Amazon Clone account';
+    }
+    if (footerPrompt) footerPrompt.style.display = 'block';
+    if (dropdownHeader) {
+      dropdownHeader.innerHTML = `
+        <p>Welcome to Amazon Clone</p>
+        <button class="dropdown-signin-btn" onclick="openLoginModal()">Sign in</button>
+        <small>New customer? <a href="#" onclick="openLoginModal(); return false;">Start here.</a></small>
+      `;
+    }
+    if (signoutLink) signoutLink.style.display = 'none';
+  }
+}
+
+function openLoginModal() {
+  closeAccountDropdown();
+  toggleModal('auth-overlay', true);
+  setTimeout(() => $('login-email')?.focus(), 100);
+}
+const closeLoginModal = e => closeModalOnBackdrop(e, 'auth-overlay', 'auth-close-btn');
+
+const handleAccountClick = () => (!currentUser ? openLoginModal() : toggleAccountDropdown());
+const handleAuthBtnClick = () => (currentUser ? logout() : openLoginModal());
+const toggleAccountDropdown = () => $('account-dropdown')?.classList.toggle('open');
+const closeAccountDropdown = () => $('account-dropdown')?.classList.remove('open');
+
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  const email = ($('login-email')?.value || '').trim();
+  if (!email) return;
+  const name = email.split('@')[0];
+  const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
+  currentUser = { name: capitalized, email };
+  localStorage.setItem('amazon_clone_user', JSON.stringify(currentUser));
+  updateAuthUI();
+  toggleModal('auth-overlay', false);
+  showToast(`Welcome back, ${capitalized}!`);
+  $('auth-form')?.reset();
+}
+
+function demoLogin() {
+  currentUser = { name: 'John Doe', email: 'john.doe@amazonclone.demo' };
+  localStorage.setItem('amazon_clone_user', JSON.stringify(currentUser));
+  updateAuthUI();
+  toggleModal('auth-overlay', false);
+  showToast('Signed in as John Doe (Demo Account)!');
+}
+
+function logout() {
+  const name = currentUser ? currentUser.name : '';
+  currentUser = null;
+  localStorage.removeItem('amazon_clone_user');
+  closeAccountDropdown();
+  updateAuthUI();
+  showToast(name ? `Signed out ${name}. See you soon!` : 'Signed out successfully.');
+}
+
+// 8. Returns & Orders
+function handleOrdersClick() {
+  if (!currentUser) {
+    openLoginModal();
+    showToast('Please sign in to view your orders & returns.');
+  } else {
+    showOrdersModal();
+  }
+}
+
+function showOrdersModal() {
+  closeAccountDropdown();
+  toggleModal('orders-overlay', true);
+  const userInfo = $('orders-user-info');
+  if (userInfo && currentUser) {
+    userInfo.innerHTML = `<span>Signed in as <b>${currentUser.name}</b> (${currentUser.email || 'Member'})</span><span class="orders-count">Showing 2 recent orders</span>`;
+  }
+}
+const closeOrdersModal = e => closeModalOnBackdrop(e, 'orders-overlay', 'orders-close-btn');
+
+// 9. Delivery Location
+const openLocationModal = () => { closeAccountDropdown(); toggleModal('location-overlay', true); };
+const closeLocationModal = e => closeModalOnBackdrop(e, 'location-overlay', 'location-close-btn');
+
+function setDeliveryCountry(country) {
+  const label = $('delivery-location-label');
+  if (label) label.innerText = country;
+  localStorage.setItem('amazon_clone_delivery_loc', country);
+  showToast(`Deliver to updated: ${country}`);
+}
+
+function applyZipCode() {
+  const zip = ($('zip-code-input')?.value || '').trim();
+  if (!zip) return alert('Please enter a valid zip or postal code.');
+  const loc = `ZIP ${zip}`;
+  const label = $('delivery-location-label');
+  if (label) label.innerText = loc;
+  localStorage.setItem('amazon_clone_delivery_loc', loc);
+  showToast(`Delivery location set to ${loc}!`);
+  toggleModal('location-overlay', false);
+}
+
+function initDeliveryLocation() {
+  try {
+    const saved = localStorage.getItem('amazon_clone_delivery_loc');
+    if (saved) {
+      const label = $('delivery-location-label');
+      if (label) label.innerText = saved;
+      const selector = $('country-selector');
+      if (selector) selector.value = saved.startsWith('ZIP') ? 'United States' : saved;
+    }
+  } catch {}
+}
+
+// 10. Global Event Listeners & Startup
+window.addEventListener('click', e => {
+  const wrap = document.querySelector('.account-wrapper');
+  if (wrap && !wrap.contains(e.target)) closeAccountDropdown();
+});
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['auth-overlay', 'orders-overlay', 'location-overlay'].forEach(id => toggleModal(id, false));
+    closeAccountDropdown();
+  }
+});
+
+// Initial Startup
 renderProducts(products);
+initAuth();
+initDeliveryLocation();
