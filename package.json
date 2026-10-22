@@ -1,0 +1,17 @@
+{
+  "name": "amazon-clone",
+  "version": "1.0.0",
+  "description": "Amazon Clone - Vanilla HTML, CSS, and JavaScript E-Commerce Store",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve -l 5500 .",
+    "start": "npx serve -l 5500 ."
+  },
+  "keywords": [
+    "amazon-clone",
+    "javascript",
+    "ecommerce"
+  ],
+  "author": "tusr23",
+  "license": "MIT"
+}

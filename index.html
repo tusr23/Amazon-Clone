@@ -45,8 +45,18 @@
       </button>
     </div>
 
-    <!-- Right: Account, Orders, Login & Cart -->
+    <!-- Right: Account, Orders, Theme, Login & Cart -->
     <div class="nav-right">
+      <!-- Theme Toggle Switch -->
+      <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Dark/Light Mode" title="Toggle Dark/Light Mode">
+        <span class="theme-toggle-track">
+          <i class="fa-solid fa-sun icon-sun"></i>
+          <i class="fa-solid fa-moon icon-moon"></i>
+          <span class="theme-toggle-thumb"></span>
+        </span>
+        <span class="theme-label" id="theme-label">Dark</span>
+      </button>
+
       <!-- Account & Lists -->
       <div class="account-wrapper">
         <div class="nav-account" id="nav-account" onclick="handleAccountClick()" aria-label="Account and Lists">
@@ -71,6 +81,7 @@
             <a href="#" onclick="showOrdersModal(); return false;"><i class="fa-solid fa-box"></i> Your Orders</a>
             <a href="#" onclick="showToast('Feature: Your Wish List'); return false;"><i class="fa-solid fa-heart"></i> Your Wish List</a>
             <a href="#" onclick="showToast('Feature: Personalized Recommendations'); return false;"><i class="fa-solid fa-tags"></i> Recommendations</a>
+            <a href="#" onclick="toggleTheme(); return false;"><i class="fa-solid fa-circle-half-stroke"></i> <span id="dropdown-theme-text">Dark Theme</span></a>
             <a href="#" id="dropdown-signout-link" class="signout-link" onclick="logout(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</a>
           </div>
         </div>
@@ -273,6 +284,19 @@
   <!-- Footer -->
   <footer>
     <div class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">Back to top</div>
+    <div class="footer-settings-bar">
+      <div class="footer-logo">amazon<span>.clone</span></div>
+      <button class="footer-theme-btn" id="footer-theme-btn" onclick="toggleTheme()" title="Switch Appearance Theme">
+        <i class="fa-solid fa-moon" id="footer-theme-icon"></i>
+        <span id="footer-theme-text">Dark Theme</span>
+      </button>
+      <div class="footer-pill-badge">
+        <i class="fa-solid fa-globe"></i> English
+      </div>
+      <div class="footer-pill-badge">
+        <i class="fa-solid fa-dollar-sign"></i> USD
+      </div>
+    </div>
     <p class="copyright">© 2026 Amazon Clone - Simple Beginner E-Commerce Project</p>
   </footer>
 
