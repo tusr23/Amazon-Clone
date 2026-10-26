@@ -30,7 +30,29 @@ const products = [
   { id: 18, title: "Ionic Ceramic Salon Hair Dryer", category: "beauty", price: 36.99, image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400" }
 ];
 
-// 2. Product Rendering
+// 2. Product Metadata Specs & Details
+const productSpecs = {
+  1: { brand: "Sony / SoundCore", rating: 4.8, reviews: 3420, oldPrice: 69.99, stock: 4, features: ["Industry-leading Active Noise Cancellation with dual mics", "Up to 40 hours playtime with USB-C quick charge", "Plush protein leather memory foam ear cushions", "Bluetooth 5.3 multipoint audio connectivity"] },
+  2: { brand: "FitPro Tech", rating: 4.7, reviews: 1890, oldPrice: 99.99, stock: 8, features: ["All-day real-time heart rate & SpO2 blood oxygen tracking", "1.78\" Vibrant AMOLED display with customizable dials", "IP68 water resistant with 14-day ultra-long battery life", "Smart notifications for calls, texts, and sports apps"] },
+  3: { brand: "JBL Audio", rating: 4.6, reviews: 2110, oldPrice: 49.99, stock: 12, features: ["Rich 360-degree punchy bass with dual passive radiators", "Rugged IPX7 waterproof & dustproof outdoor chassis", "Up to 16 hours continuous playtime per charge", "Built-in noise-canceling microphone for speakerphone"] },
+  4: { brand: "Anker Power", rating: 4.5, reviews: 940, oldPrice: 39.99, stock: 6, features: ["Fast 15W wireless charging for phone, watch & earbuds", "Intelligent safety system with overcharge temperature control", "Case-friendly wireless induction design up to 5mm", "Sleek weighted anti-slip aluminum alloy base"] },
+  5: { brand: "SteelPlay Gaming", rating: 4.9, reviews: 4210, oldPrice: 59.99, stock: 5, features: ["Zero-drift Hall Effect magnetic triggers and joysticks", "Customizable dynamic RGB lighting with 6 color modes", "Ultra-low latency 2.4GHz wireless plus Bluetooth multi-platform", "Textured ergonomic rubber grips for competitive marathons"] },
+  6: { brand: "Razer Mech", rating: 4.8, reviews: 3100, oldPrice: 79.99, stock: 7, features: ["Tactile clicky mechanical switches rated for 80M keystrokes", "Full RGB per-key backlighting with dynamic reactive animations", "Durable aircraft-grade aluminum alloy top plate construction", "Detachable braided USB-C cable for easy travel"] },
+  7: { brand: "HyperSound", rating: 4.6, reviews: 1450, oldPrice: 54.99, stock: 10, features: ["Immersive 7.1 virtual surround sound with 50mm drivers", "Noise-canceling detachable microphone with LED mute indicator", "Breathable memory foam ear pads for pressure-free gaming", "Universal 3.5mm and USB compatibility with PC and consoles"] },
+  8: { brand: "Nike / SwiftRun", rating: 4.7, reviews: 5200, oldPrice: 85.00, stock: 3, features: ["Ultra-responsive air-cushioned foam midsole for soft landings", "Engineered lightweight mesh upper for 360-degree breathability", "Durable grooved rubber traction outsole for wet and dry pavement", "Reinforced heel support counter to prevent pronation"] },
+  9: { brand: "Fossil Quartz", rating: 4.5, reviews: 880, oldPrice: 59.99, stock: 9, features: ["Precision Japanese quartz three-hand movement mechanism", "Genuine brown stitched leather strap with stainless steel buckle", "Scratch-resistant hardened mineral crystal glass dial", "Water resistant to 50 meters (165 ft) for recreational swimming"] },
+  10: { brand: "Ray-Style Polarized", rating: 4.4, reviews: 1620, oldPrice: 29.99, stock: 15, features: ["100% UV400 protective polarized lenses blocking 99.9% UVA/UVB", "Durable lightweight polycarbonate frame with spring-hinge arms", "Eliminates glare from water, snow, and driving surfaces", "Includes protective hardshell travel case and cleaning cloth"] },
+  11: { brand: "SwissGear Travel", rating: 4.8, reviews: 2940, oldPrice: 48.99, stock: 6, features: ["Padded dedicated laptop compartment holding up to 17-inch laptops", "Water-resistant ballistic nylon exterior with anti-theft pockets", "Built-in external USB charging port with internal pass-through", "Ergonomic air-mesh ventilated back panel and luggage strap"] },
+  12: { brand: "De'Longhi Brew", rating: 4.7, reviews: 3870, oldPrice: 129.99, stock: 4, features: ["Authentic 15-bar Italian pump for optimal espresso extraction", "Manual swivel steam frothing wand for rich creamy lattes", "Removable 44-ounce transparent water reservoir for easy refills", "Dual-wall stainless steel filter holder for 1 or 2 shots"] },
+  13: { brand: "Ninja AirFlow", rating: 4.9, reviews: 6410, oldPrice: 99.99, stock: 5, features: ["Rapid 360-degree cyclonic air circulation with 75% less oil", "4-Quart nonstick ceramic-coated basket holds 2 lbs of food", "One-touch digital touchscreen with 6 customizable cooking presets", "Dishwasher-safe removable basket for 60-second cleanup"] },
+  14: { brand: "Hydro Flask", rating: 4.6, reviews: 1730, oldPrice: 28.00, stock: 14, features: ["TempShield double-wall vacuum keeps cold 24h or hot 12h", "18/8 pro-grade food-safe stainless steel with zero flavor transfer", "ColorLast powder-coat finish won't sweat, slip, or fade", "100% leakproof flex cap with flexible TPU carry strap"] },
+  15: { brand: "Penguin Random", rating: 4.9, reviews: 18400, oldPrice: 27.00, stock: 20, features: ["#1 New York Times Bestseller by James Clear with 15M+ copies sold", "Proven framework for forming good habits and 1% daily improvement", "Includes practical habit tracking scorecards and actionable tools", "Deluxe embossed hardcover presentation with gold foil accents"] },
+  16: { brand: "Harriman House", rating: 4.8, reviews: 12100, oldPrice: 22.00, stock: 18, features: ["Acclaimed international bestseller by author Morgan Housel", "19 short compelling stories exploring how people think about money", "Timeless lessons on greed, risk, compounding, and financial freedom", "Compact readable paperback printed on acid-free archival paper"] },
+  17: { brand: "TruSkin Organics", rating: 4.6, reviews: 2280, oldPrice: 24.99, stock: 11, features: ["Potent 20% Vitamin C + Hyaluronic Acid & Vitamin E radiance formula", "Formulated to target dark spots, fine lines, and brighten skin tone", "Plant-based, cruelty-free, paraben-free, and dermatologist-tested", "Gentle non-greasy formula suitable for all skin types"] },
+  18: { brand: "Revlon Salon", rating: 4.7, reviews: 3150, oldPrice: 52.00, stock: 7, features: ["1875-Watt professional ionic ceramic motor cuts drying time in half", "Tourmaline ionic technology tames frizz and seals cuticles for shine", "3 heat / 2 speed settings plus cold shot lock button to set style", "Includes styling smoothing concentrator nozzle and diffuser"] }
+};
+
+// 3. Product Rendering
 function renderProducts(list) {
   const grid = $('products-grid');
   if (!grid) return;
@@ -45,12 +67,17 @@ function renderProducts(list) {
     return;
   }
   grid.innerHTML = list.map(p => `
-    <div class="card">
-      <img src="${p.image}" alt="${p.title}" loading="lazy">
-      <h4>${p.title}</h4>
-      <div class="rating">★★★★★ (4.8)</div>
+    <div class="card" onclick="openProductModal(${p.id})">
+      <div class="card-img-wrap">
+        <img src="${p.image}" alt="${p.title}" loading="lazy">
+        <button class="quick-view-badge" onclick="event.stopPropagation(); openProductModal(${p.id})" aria-label="Quick preview of ${p.title}">
+          <i class="fa-solid fa-eye"></i> Quick View
+        </button>
+      </div>
+      <h4 onclick="event.stopPropagation(); openProductModal(${p.id})">${p.title}</h4>
+      <div class="rating">★★★★★ (${(productSpecs[p.id]?.rating || 4.8).toFixed(1)})</div>
       <div class="price">$${p.price.toFixed(2)}</div>
-      <button class="buy-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+      <button class="buy-btn" onclick="event.stopPropagation(); addToCart(${p.id})">Add to Cart</button>
     </div>`).join('');
 }
 
@@ -303,14 +330,125 @@ function applyTheme(isDark, notify = true) {
 
 const toggleTheme = () => applyTheme(!document.body.classList.contains('dark-mode'), true);
 
-// 11. Global Listeners & Bootstrap
+// 11. Product Quick View Modal
+function openProductModal(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  const d = productSpecs[p.id] || {
+    brand: `${p.category.toUpperCase()} Store`, rating: 4.8, reviews: 1500,
+    oldPrice: +(p.price * 1.3).toFixed(2), stock: 6,
+    features: ["Premium quality materials engineered for longevity", "Fast and free shipping on eligible orders", "Amazon customer satisfaction guaranteed"]
+  };
+  const discount = d.oldPrice ? Math.round(((d.oldPrice - p.price) / d.oldPrice) * 100) : 0;
+  const loc = $('delivery-location-label')?.innerText || 'Worldwide';
+
+  const body = $('product-modal-body');
+  if (body) {
+    body.innerHTML = `
+      <div class="pm-layout">
+        <div class="pm-visual-col">
+          <div class="pm-badge-row">
+            <span class="pm-prime-badge"><i class="fa-solid fa-check"></i> prime</span>
+            ${discount > 0 ? `<span class="pm-deal-badge">Save ${discount}%</span>` : ''}
+          </div>
+          <div class="pm-img-container">
+            <img src="${p.image}" alt="${p.title}" class="pm-main-img">
+          </div>
+          <div class="pm-delivery-pill">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>FREE delivery <b>Tomorrow</b> on orders over $35</span>
+          </div>
+        </div>
+
+        <div class="pm-info-col">
+          <div class="pm-brand-tag">Brand: ${d.brand}</div>
+          <h2 class="pm-title">${p.title}</h2>
+          <div class="pm-rating-row">
+            <span class="pm-stars">★★★★★</span>
+            <span class="pm-score">${d.rating.toFixed(1)}</span>
+            <span class="pm-reviews-link">${d.reviews.toLocaleString()} ratings</span>
+            <span class="pm-choice-badge">Amazon's <span>Choice</span></span>
+          </div>
+
+          <div class="pm-price-box">
+            <span class="pm-price">$${p.price.toFixed(2)}</span>
+            ${d.oldPrice ? `<span class="pm-old-price">List: $${d.oldPrice.toFixed(2)}</span>` : ''}
+            <span class="pm-tax-note">Inclusive of all taxes</span>
+          </div>
+
+          <div class="pm-stock-badge ${d.stock <= 5 ? 'low-stock' : 'in-stock'}">
+            <i class="fa-solid fa-circle-check"></i>
+            ${d.stock <= 5 ? `Only ${d.stock} left in stock - order soon.` : 'In Stock. Usually ships within 24 hours.'}
+          </div>
+
+          <div class="pm-about-section">
+            <h4>About this item</h4>
+            <ul class="pm-bullets">
+              ${d.features.map(f => `<li><i class="fa-solid fa-circle-dot"></i> <span>${f}</span></li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="pm-action-box">
+            <div class="pm-qty-row">
+              <label for="pm-qty-select">Quantity:</label>
+              <select id="pm-qty-select" class="pm-qty-select">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="pm-shipping-loc"><i class="fa-solid fa-location-dot"></i> Deliver to <b>${loc}</b></span>
+            </div>
+
+            <div class="pm-btn-group">
+              <button class="pm-btn-cart" onclick="addToCartFromModal(${p.id})">
+                <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+              </button>
+              <button class="pm-btn-buy" onclick="buyNowFromModal(${p.id})">
+                <i class="fa-solid fa-bolt"></i> Buy Now
+              </button>
+            </div>
+
+            <div class="pm-guarantees">
+              <span><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span>
+              <span><i class="fa-solid fa-shield-halved"></i> Secure Transaction</span>
+              <span><i class="fa-solid fa-box"></i> Amazon Logistics</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+  toggleModal('product-modal-overlay', true);
+}
+
+function closeProductModal(e) {
+  closeModalOnBackdrop(e, 'product-modal-overlay', 'product-modal-close');
+}
+
+function addToCartFromModal(id) {
+  const qty = parseInt($('pm-qty-select')?.value || '1', 10);
+  const item = products.find(p => p.id === id);
+  if (!item) return;
+  for (let k = 0; k < qty; k++) cart.push(item);
+  updateCart();
+  showToast(`Added ${qty > 1 ? qty + 'x ' : ''}"${item.title.slice(0, 18)}..." to cart!`);
+  toggleModal('product-modal-overlay', false);
+}
+
+function buyNowFromModal(id) {
+  addToCartFromModal(id);
+  toggleCart();
+}
+
+// 12. Global Listeners & Bootstrap
 window.addEventListener('click', e => {
   const w = document.querySelector('.account-wrapper');
   if (w && !w.contains(e.target)) closeAccountDropdown();
 });
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    ['auth-overlay', 'orders-overlay', 'location-overlay'].forEach(id => toggleModal(id, false));
+    ['auth-overlay', 'orders-overlay', 'location-overlay', 'product-modal-overlay'].forEach(id => toggleModal(id, false));
     if ($('cart-drawer')?.classList.contains('open')) toggleCart();
     closeAccountDropdown();
   }

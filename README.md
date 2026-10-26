@@ -10,6 +10,7 @@ A lightweight, beginner-friendly Amazon Clone built using vanilla **HTML**, **CS
 - **Live Search**: Instant product filtering as you type into the search bar.
 - **Interactive Category Tabs**: Filter products across Electronics, Fashion, Gaming, Home, Books, Beauty, and Today's Deals.
 - **Dynamic Product Grid**: Clean e-commerce cards with images, star ratings, and prices.
+- **Product Quick View Modal**: Interactive popup showing image zoom, Prime badge, full bullet specifications ("About this item"), stock counter, quantity selector, and instant "Buy Now" & "Add to Cart" actions.
 - **Amazon Dark Mode Toggle**: Instant switch between classic light theme and sleek Amazon Prime dark theme with `localStorage` persistence and OS auto-detection.
 - **Sliding Shopping Cart Drawer**:
   - Slide-in cart sidebar with item thumbnails and titles

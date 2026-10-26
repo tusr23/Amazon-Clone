@@ -278,6 +278,14 @@
     </div>
   </div>
 
+  <!-- Product Quick View Modal -->
+  <div class="product-modal-overlay" id="product-modal-overlay" onclick="closeProductModal(event)">
+    <div class="product-modal" id="product-modal" onclick="event.stopPropagation()">
+      <button class="product-modal-close" onclick="closeProductModal()" aria-label="Close product view">&times;</button>
+      <div class="product-modal-body" id="product-modal-body"></div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast">Added to cart!</div>
 
